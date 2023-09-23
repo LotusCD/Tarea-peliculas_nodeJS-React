@@ -1,6 +1,6 @@
 
 const mongoose = require('mongoose');
-const { instantiateDatabase } = require('../controllers/controller');
+const { instantiateDatabase } = require('./InstantiateDB');
 
 // Environment variables
 require('dotenv').config();
