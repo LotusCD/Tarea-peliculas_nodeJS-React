@@ -1,17 +1,56 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AxiosContext } from '../index';
 import BaseLayout from './BaseLayout';
+import ModalComponent from './Modal';
 
 const Director = () => {
     const [directorMovies, setDirectorMovies] = useState({});
+    const [showModal, setShowModal] = useState(false);
+    const [movieDetails, setMovieDetails] = useState({}); 
     const axiosInstance = useContext(AxiosContext);
 
-    useEffect(() => {
+    const fetchMoviesByDirector = () => {
         axiosInstance.get('http://localhost:5000/director/')
             .then(response => {
                 setDirectorMovies(response.data);
+            })
+            .catch(error => {
+                console.error("Error fetching movies by director:", error);
             });
+    };
+
+    useEffect(() => {
+        fetchMoviesByDirector();
     }, [axiosInstance]);
+
+    const handleEditClick = (pelicula) => {
+        setMovieDetails(pelicula);
+        setShowModal(true);
+    };
+
+    const handleSaveChanges = () => {
+        axiosInstance.put(`http://localhost:5000/movies/${movieDetails._id}`, movieDetails)
+            .then(response => {
+                console.log("Movie updated successfully:", response.data);
+                setShowModal(false);
+                fetchMoviesByDirector();
+            })
+            .catch(error => {
+                console.error("Error updating movie:", error);
+            });
+    };
+
+    const handleDelete = () => {
+        axiosInstance.delete(`http://localhost:5000/movies/${movieDetails._id}`)
+            .then(response => {
+                console.log("Movie deleted successfully:", response.data);
+                setShowModal(false);
+                fetchMoviesByDirector();
+            })
+            .catch(error => {
+                console.error("Error deleting movie:", error);
+            });
+    };
 
     return (
         <BaseLayout>
@@ -42,6 +81,13 @@ const Director = () => {
                                                     >
                                                         Ver
                                                     </button>
+                                                    <button 
+                                                        className="btn btn-warning mt-2" 
+                                                        type="button" 
+                                                        onClick={() => handleEditClick(pelicula)}
+                                                    >
+                                                        Edit
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -53,6 +99,15 @@ const Director = () => {
                         <hr />
                     </React.Fragment>
                 ))}
+                <ModalComponent 
+                    show={showModal}
+                    handleClose={() => setShowModal(false)}
+                    title="Edit Movie"
+                    handleSaveChanges={handleSaveChanges}
+                    handleDelete={handleDelete}
+                    movieDetails={movieDetails}
+                    setMovieDetails={setMovieDetails}
+                />
             </div>
         </BaseLayout>
     );

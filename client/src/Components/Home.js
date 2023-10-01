@@ -1,17 +1,59 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AxiosContext } from '../index';  // Import the AxiosContext
+import { AxiosContext } from '../index'; 
 import BaseLayout from './BaseLayout';
+import ModalComponent from './Modal';
+
 
 const Home = () => {
     const [peliculas, setPeliculas] = useState([]);
-    const axiosInstance = useContext(AxiosContext);  // Access the Axios instance from context
+    const [showModal, setShowModal] = useState(false);
+    const [movieDetails, setMovieDetails] = useState({}); 
+    const axiosInstance = useContext(AxiosContext);
 
-    useEffect(() => {
+    const fetchMovies = () => {
         axiosInstance.get('http://localhost:5000/')
             .then(response => {
                 setPeliculas(response.data);
+            })
+            .catch(error => {
+                console.error("Error fetching movies:", error);
             });
+    };
+
+    useEffect(() => {
+        fetchMovies();
     }, [axiosInstance]);
+
+    const handleEditClick = (pelicula) => {
+        setMovieDetails(pelicula);
+        setShowModal(true);
+    };
+
+    const handleSaveChanges = () => {
+        axiosInstance.put(`http://localhost:5000/movies/${movieDetails._id}`, movieDetails)
+            .then(response => {
+                console.log("Movie updated successfully:", response.data);
+                setShowModal(false);
+                fetchMovies();  // Re-fetch data after update
+            })
+            .catch(error => {
+                console.error("Error updating movie:", error);
+            });
+    };
+
+    const handleDelete = () => {
+        axiosInstance.delete(`http://localhost:5000/movies/${movieDetails._id}`)
+            .then(response => {
+                console.log("Movie deleted successfully:", response.data);
+                setShowModal(false);
+                fetchMovies();  // Re-fetch data after deletion
+            })
+            .catch(error => {
+                console.error("Error deleting movie:", error);
+            });
+    };
+
+
 
     return (
         <BaseLayout>
@@ -38,6 +80,13 @@ const Home = () => {
                                             >
                                                 Ver
                                             </button>
+                                            <button 
+                                                className="btn btn-warning mt-2" 
+                                                type="button" 
+                                                onClick={() => handleEditClick(pelicula)}
+                                            >
+                                                Edit
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -47,8 +96,16 @@ const Home = () => {
                     ))}
                 </div>
             </header>
+            <ModalComponent 
+                show={showModal}
+                handleClose={() => setShowModal(false)}
+                title="Edit Movie"
+                handleSaveChanges={handleSaveChanges} // Use handleUpdate here
+                handleDelete={handleDelete} // Pass the handleDelete to the Modal
+                movieDetails={movieDetails}
+                setMovieDetails={setMovieDetails}
+            />
         </BaseLayout>
-
     );
 }
 
