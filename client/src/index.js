@@ -1,13 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import './style.css';
+import Home from './Components/Home';  // Import the Home component
 import reportWebVitals from './reportWebVitals';
+
+import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+
+export const AxiosContext = React.createContext();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <AxiosContext.Provider value={axios}>
+    <Home /> 
+    </AxiosContext.Provider>
   </React.StrictMode>
 );
 
