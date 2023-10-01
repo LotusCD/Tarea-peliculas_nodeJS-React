@@ -1,15 +1,14 @@
 import React from 'react';
 
 const BaseLayout = ({ children }) => {
-    const searchGoogle = (title) => {
-        window.open(`https://www.google.com/search?q=${title}`, '_blank');
-    };
 
     return (
         <div>
             <body>
                 <div className="navbar container">
-                    {/* ... Navbar content ... */}
+                    {/* Logo Image */}
+                    <img src="/logo.png" alt="Logo" className="navbar-logo" />
+                    <h1> Navbar aquí </h1>
                 </div>
                 <main id="app">
                     {children}
