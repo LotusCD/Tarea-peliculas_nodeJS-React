@@ -6,6 +6,12 @@ const connectMongo = require('./config/mongo');
 
 const app = express();
 
+// const corsOptions = {
+//     origin: 'http://localhost:3000',  // Your React app's address
+//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//     credentials: true,
+//     allowedHeaders: ['Content-Type', 'Authorization']
+// };
 
 // Middleware to parse JSON should come first
 app.use(express.json());

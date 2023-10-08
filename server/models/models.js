@@ -16,6 +16,12 @@ const movieSchema = new mongoose.Schema({
         type: String,
         enum: ['movie', 'tv_show'],
         required: true
+    },
+    plot: {
+        type: String,  // This defines the fullplot as a string.
+    },
+    poster: {
+        type: String,  // This defines the poster as a string.
     }
 });
 

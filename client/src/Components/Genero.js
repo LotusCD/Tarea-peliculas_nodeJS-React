@@ -1,25 +1,115 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AxiosContext } from '../index';  // Import the AxiosContext
+import { AxiosContext } from '../index';
 import BaseLayout from './BaseLayout';
+import ModalComponent from './Modal';
 
 const Genero = () => {
-    const [peliculas, setPeliculas] = useState([]);
-    const axiosInstance = useContext(AxiosContext);  // Access the Axios instance from context
+    const [GeneroMovies, setGeneroMovies] = useState({});
+    const [showModal, setShowModal] = useState(false);
+    const [movieDetails, setMovieDetails] = useState({}); 
+    const axiosInstance = useContext(AxiosContext);
+
+    const fetchMoviesByGenero = () => {
+        axiosInstance.get('http://localhost:5000/Genero/')
+            .then(response => {
+                setGeneroMovies(response.data);
+            })
+            .catch(error => {
+                console.error("Error fetching movies by Genero:", error);
+            });
+    };
 
     useEffect(() => {
-        axiosInstance.get('http://localhost:5000/genero/')
-            .then(response => {
-                setPeliculas(response.data);
-            });
+        fetchMoviesByGenero();
     }, [axiosInstance]);
+
+    const handleEditClick = (pelicula) => {
+        setMovieDetails(pelicula);
+        setShowModal(true);
+    };
+
+    const handleSaveChanges = () => {
+        axiosInstance.put(`http://localhost:5000/movies/${movieDetails._id}`, movieDetails)
+            .then(response => {
+                console.log("Movie updated successfully:", response.data);
+                setShowModal(false);
+                fetchMoviesByGenero();
+            })
+            .catch(error => {
+                console.error("Error updating movie:", error);
+            });
+    };
+
+    const handleDelete = () => {
+        axiosInstance.delete(`http://localhost:5000/movies/${movieDetails._id}`)
+            .then(response => {
+                console.log("Movie deleted successfully:", response.data);
+                setShowModal(false);
+                fetchMoviesByGenero();
+            })
+            .catch(error => {
+                console.error("Error deleting movie:", error);
+            });
+    };
 
     return (
         <BaseLayout>
-            <header className="container">
-                <h1 className="text-center">Genero</h1>
-            </header>
+            <div className="container">
+                {Object.entries(GeneroMovies).map(([Genero, peliculas]) => (
+                    <React.Fragment key={Genero}>
+                        <header>
+                            <h2 className="text-center">{Genero}</h2>
+                        </header>
+                        <div className="row">
+                            {peliculas.map((pelicula, index) => (
+                                <React.Fragment key={pelicula._id}>
+                                    <div className="col-md-2">
+                                        <div className="card h-100 mb-4">
+                                            <img 
+                                                src={pelicula.poster} 
+                                                className="card-img-top" 
+                                                alt={pelicula.title} 
+                                            />
+                                            <div className="card-body d-flex flex-column">
+                                                <h5 className="card-title">{pelicula.title}</h5>
+                                                <p className="card-text flex-grow-1">{pelicula.plot}</p>
+                                                <div className="d-grid gap-1 mt-auto">
+                                                    <button 
+                                                        className="btn btn-primary" 
+                                                        type="button" 
+                                                        onClick={() => window.open(`https://www.google.com/search?q=${pelicula.title}`, '_blank')}
+                                                    >
+                                                        Ver
+                                                    </button>
+                                                    <button 
+                                                        className="btn btn-warning mt-2" 
+                                                        type="button" 
+                                                        onClick={() => handleEditClick(pelicula)}
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {(index + 1) % 5 === 0 && <div className="w-100 mb-4"></div>}
+                                </React.Fragment>
+                            ))}
+                        </div>
+                        <hr />
+                    </React.Fragment>
+                ))}
+                <ModalComponent 
+                    show={showModal}
+                    handleClose={() => setShowModal(false)}
+                    title="Edit Movie"
+                    handleSaveChanges={handleSaveChanges}
+                    handleDelete={handleDelete}
+                    movieDetails={movieDetails}
+                    setMovieDetails={setMovieDetails}
+                />
+            </div>
         </BaseLayout>
-
     );
 }
 
