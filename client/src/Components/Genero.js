@@ -3,6 +3,8 @@ import { AxiosContext } from '../index';
 import BaseLayout from './BaseLayout';
 import ModalComponent from './Modal';
 import { useAuth } from '../AuthContext'; // Make sure to provide the correct path to AuthContext.js
+import { useNavigate } from 'react-router-dom';
+
 
 
 const Genero = () => {
@@ -11,10 +13,19 @@ const Genero = () => {
     const [movieDetails, setMovieDetails] = useState({}); 
     const axiosInstance = useContext(AxiosContext);
 
+    const navigate = useNavigate();
+
+    const { authToken } = useAuth(); // Get the authToken using the useAuth hook
+
+    useEffect(() => {
+        if (!authToken) {
+            navigate('/Login');
+        }
+    }, [authToken, navigate]);
 
     // Inside your component:
     
-    const { authToken } = useAuth(); // Get the authToken using the useAuth hook
+    
     
     const fetchMoviesByGenero = () => {
         axiosInstance.get('http://localhost:5000/Genero/', {

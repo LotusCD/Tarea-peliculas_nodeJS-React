@@ -3,8 +3,7 @@ import { AxiosContext } from '../index';
 import BaseLayout from './BaseLayout';
 import ModalComponent from './Modal';
 import { useAuth } from '../AuthContext'; // Make sure to provide the correct path to AuthContext.js
-
-
+import { useNavigate } from 'react-router-dom';  // Import useNavigate
 
 const Home = () => {
     const [peliculas, setPeliculas] = useState([]);
@@ -13,8 +12,13 @@ const Home = () => {
     const axiosInstance = useContext(AxiosContext);
 
     const { authToken } = useAuth();
+    const navigate = useNavigate();  // Get the navigate function
 
-
+    useEffect(() => {
+        if (!authToken) {
+            navigate('/Login');  // Redirect to /Login if there is no valid token
+        }
+    }, [authToken, navigate]);
 
     const fetchMovies = () => {
         axiosInstance.get('http://localhost:5000/', {
