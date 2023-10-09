@@ -9,6 +9,9 @@ Este es un proyecto simple que combina un servidor backend con Node.js y Express
 
 ## Cómo configurar y ejecutar el proyecto
 
+![alt text](Funcionamiento.gif)
+
+
 ### Configuración del Servidor
 
 1. Navega a la carpeta `server/`:
