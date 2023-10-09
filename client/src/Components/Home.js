@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AxiosContext } from '../index'; 
 import BaseLayout from './BaseLayout';
 import ModalComponent from './Modal';
+import { useAuth } from '../AuthContext'; // Make sure to provide the correct path to AuthContext.js
+
 
 
 const Home = () => {
@@ -10,8 +12,16 @@ const Home = () => {
     const [movieDetails, setMovieDetails] = useState({}); 
     const axiosInstance = useContext(AxiosContext);
 
+    const { authToken } = useAuth();
+
+
+
     const fetchMovies = () => {
-        axiosInstance.get('http://localhost:5000/')
+        axiosInstance.get('http://localhost:5000/', {
+            headers: {
+                'Authorization': 'Bearer ' + authToken
+            }
+        })
             .then(response => {
                 setPeliculas(response.data);
             })
@@ -30,7 +40,11 @@ const Home = () => {
     };
 
     const handleSaveChanges = () => {
-        axiosInstance.put(`http://localhost:5000/movies/${movieDetails._id}`, movieDetails)
+        axiosInstance.put(`http://localhost:5000/movies/${movieDetails._id}`, movieDetails, {
+            headers: {
+                'Authorization': 'Bearer ' + authToken
+            }
+        })
             .then(response => {
                 console.log("Movie updated successfully:", response.data);
                 setShowModal(false);
@@ -42,7 +56,11 @@ const Home = () => {
     };
 
     const handleDelete = () => {
-        axiosInstance.delete(`http://localhost:5000/movies/${movieDetails._id}`)
+        axiosInstance.delete(`http://localhost:5000/movies/${movieDetails._id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + authToken
+            }
+        })
             .then(response => {
                 console.log("Movie deleted successfully:", response.data);
                 setShowModal(false);

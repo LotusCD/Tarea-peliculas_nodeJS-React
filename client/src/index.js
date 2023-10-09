@@ -12,7 +12,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { App } from './App';
 
-export const AxiosContext = React.createContext();
+
+
+// Axios instance
+const axiosInstance = axios.create({
+  baseURL: 'http://localhost:5000',
+  // ... any other axios configurations you might have ...
+});
+
+export const AxiosContext = React.createContext(axiosInstance);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

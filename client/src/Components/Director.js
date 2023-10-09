@@ -2,6 +2,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AxiosContext } from '../index';
 import BaseLayout from './BaseLayout';
 import ModalComponent from './Modal';
+import { useAuth } from '../AuthContext'; // Make sure to provide the correct path to AuthContext.js
+
+
 
 const Director = () => {
     const [directorMovies, setDirectorMovies] = useState({});
@@ -9,48 +12,63 @@ const Director = () => {
     const [movieDetails, setMovieDetails] = useState({}); 
     const axiosInstance = useContext(AxiosContext);
 
+    const { authToken } = useAuth(); // Get the authToken using the useAuth hook
+    
     const fetchMoviesByDirector = () => {
-        axiosInstance.get('http://localhost:5000/director/')
-            .then(response => {
-                setDirectorMovies(response.data);
-            })
-            .catch(error => {
-                console.error("Error fetching movies by director:", error);
-            });
+        axiosInstance.get('http://localhost:5000/Director/', {
+            headers: {
+                'Authorization': 'Bearer ' + authToken
+            }
+        })
+        .then(response => {
+            setDirectorMovies(response.data);
+        })
+        .catch(error => {
+            console.error("Error fetching movies by Director:", error);
+        });
     };
-
+    
     useEffect(() => {
         fetchMoviesByDirector();
     }, [axiosInstance]);
-
+    
     const handleEditClick = (pelicula) => {
         setMovieDetails(pelicula);
         setShowModal(true);
     };
-
+    
     const handleSaveChanges = () => {
-        axiosInstance.put(`http://localhost:5000/movies/${movieDetails._id}`, movieDetails)
-            .then(response => {
-                console.log("Movie updated successfully:", response.data);
-                setShowModal(false);
-                fetchMoviesByDirector();
-            })
-            .catch(error => {
-                console.error("Error updating movie:", error);
-            });
+        axiosInstance.put(`http://localhost:5000/movies/${movieDetails._id}`, movieDetails, {
+            headers: {
+                'Authorization': 'Bearer ' + authToken
+            }
+        })
+        .then(response => {
+            console.log("Movie updated successfully:", response.data);
+            setShowModal(false);
+            fetchMoviesByDirector();
+        })
+        .catch(error => {
+            console.error("Error updating movie:", error);
+        });
     };
-
+    
     const handleDelete = () => {
-        axiosInstance.delete(`http://localhost:5000/movies/${movieDetails._id}`)
-            .then(response => {
-                console.log("Movie deleted successfully:", response.data);
-                setShowModal(false);
-                fetchMoviesByDirector();
-            })
-            .catch(error => {
-                console.error("Error deleting movie:", error);
-            });
+        axiosInstance.delete(`http://localhost:5000/movies/${movieDetails._id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + authToken
+            }
+        })
+        .then(response => {
+            console.log("Movie deleted successfully:", response.data);
+            setShowModal(false);
+            fetchMoviesByDirector();
+        })
+        .catch(error => {
+            console.error("Error deleting movie:", error);
+        });
     };
+    
 
     return (
         <BaseLayout>

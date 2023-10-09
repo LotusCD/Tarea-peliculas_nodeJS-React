@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AddMovieModal } from './Modal';
 import axios from 'axios';
+import { useAuth } from '../AuthContext'; // Make sure to provide the correct path to AuthContext.js
 
-const Navbar = ({ onAddMovieClick }) => (
+const Navbar = ({ onAddMovieClick, isLoggedIn, handleLogout }) => (
     <div className="navbar container">
         {/* Logo Image */}
         <Link to="/">
@@ -34,6 +35,15 @@ const Navbar = ({ onAddMovieClick }) => (
                                 <li><Link className="dropdown-item" onClick={onAddMovieClick}>Agregar pelicula</Link></li>
                             </ul>
                         </li>
+                        <li className="nav-item">
+                            <Link
+                                className="nav-link"
+                                to="/Login"
+                                onClick={isLoggedIn ? handleLogout : null}
+                            >
+                                {isLoggedIn ? 'Logout' : 'Login'}
+                            </Link>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -52,21 +62,34 @@ const BaseLayout = ({ children }) => {
         type: ""
     });
 
-    const handleAddMovie = () => {
-      axios.post('http://localhost:5000/movies', newMovieDetails)
-          .then(response => {
-              console.log("Movie added successfully:", response.data);
-              setShowAddModal(false);
-              // You might want to re-fetch data or do some other action
-          })
-          .catch(error => {
-              console.error("Error adding movie:", error);
-          });
-  };
+    const { authToken, isLoggedIn, logout } = useAuth();  // Get the authToken, isLoggedIn, and logout function using the useAuth hook
 
+    const handleLogout = () => {
+        logout();  // Call the logout function from AuthContext to remove the token
+    };
+
+    const handleAddMovie = () => {
+        axios.post('http://localhost:5000/movies', newMovieDetails, {
+            headers: {
+                'Authorization': 'Bearer ' + authToken
+            }
+        })
+        .then(response => {
+            console.log("Movie added successfully:", response.data);
+            setShowAddModal(false);
+            // You might want to re-fetch data or do some other action
+        })
+        .catch(error => {
+            console.error("Error adding movie:", error);
+        });
+    };
     return (
         <>
-            <Navbar onAddMovieClick={() => setShowAddModal(true)} />
+            <Navbar 
+                onAddMovieClick={() => setShowAddModal(true)} 
+                isLoggedIn={isLoggedIn}
+                handleLogout={handleLogout}
+            />
             <main id="app">
                 {children}
             </main>
