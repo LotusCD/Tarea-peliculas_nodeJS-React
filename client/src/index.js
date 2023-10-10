@@ -4,7 +4,6 @@ import './style.css';
 
 import reportWebVitals from './reportWebVitals';
 
-import axios from 'axios';
 import { BrowserRouter } from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -20,13 +19,13 @@ import { App } from './App';
 //   // ... any other axios configurations you might have ...
 // });
 
-export const AxiosContext = React.createContext(axiosInstance);
+// export const AxiosContext = React.createContext(axiosInstance);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <App axiosInstance={axios} />
+      <App /> {/* Remove the axiosInstance prop */}
     </BrowserRouter>
   </React.StrictMode>
 );

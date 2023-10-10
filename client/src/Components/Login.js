@@ -4,6 +4,9 @@ import { AuthContext } from '../AuthContext';  // Import the AuthContext (not Au
 
 import { apiService } from '../Helpers/apiService'; 
 
+import '../Login.css';  // Import the CSS file here
+
+
 
 const Login = () => {
     const [name, setName] = useState('');
