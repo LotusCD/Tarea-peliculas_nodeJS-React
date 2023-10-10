@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AddMovieModal } from './Modal';
-import axios from 'axios';
 import { useAuth } from '../AuthContext'; // Make sure to provide the correct path to AuthContext.js
+
+import { apiService } from '../Helpers/apiService'; 
+
 
 const Navbar = ({ onAddMovieClick, isLoggedIn, handleLogout }) => (
     <div className="navbar container">
@@ -69,20 +71,21 @@ const BaseLayout = ({ children }) => {
     };
 
     const handleAddMovie = () => {
-        axios.post('http://localhost:5000/movies', newMovieDetails, {
-            headers: {
-                'Authorization': 'Bearer ' + authToken
-            }
-        })
-        .then(response => {
-            console.log("Movie added successfully:", response.data);
-            setShowAddModal(false);
-            // You might want to re-fetch data or do some other action
-        })
-        .catch(error => {
-            console.error("Error adding movie:", error);
-        });
-    };
+      apiService.post('/movies', newMovieDetails, {
+          headers: {
+              'Authorization': 'Bearer ' + authToken
+          }
+      })
+      .then(response => {
+          console.log("Movie added successfully:", response.data);
+          setShowAddModal(false);
+          // You might want to re-fetch data or do some other action
+      })
+      .catch(error => {
+          console.error("Error adding movie:", error);
+      });
+  };
+  
     return (
         <>
             <Navbar 

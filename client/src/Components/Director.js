@@ -5,13 +5,13 @@ import ModalComponent from './Modal';
 import { useAuth } from '../AuthContext'; // Make sure to provide the correct path to AuthContext.js
 import { useNavigate } from 'react-router-dom';
 
+import { apiService } from '../Helpers/apiService'; 
 
 
 const Director = () => {
     const [directorMovies, setDirectorMovies] = useState({});
     const [showModal, setShowModal] = useState(false);
     const [movieDetails, setMovieDetails] = useState({}); 
-    const axiosInstance = useContext(AxiosContext);
 
     const navigate = useNavigate();
 
@@ -24,7 +24,7 @@ const Director = () => {
     }, [authToken, navigate]);
     
     const fetchMoviesByDirector = () => {
-        axiosInstance.get('http://localhost:5000/Director/', {
+        apiService.get('/Director/', {
             headers: {
                 'Authorization': 'Bearer ' + authToken
             }
@@ -33,13 +33,14 @@ const Director = () => {
             setDirectorMovies(response.data);
         })
         .catch(error => {
-            console.error("Error fetching movies by Director:", error);
+            const errorMessage = error.response && error.response.data ? error.response.data.message : error.message;
+            console.error("Error fetching movies by Director:", errorMessage);
         });
     };
     
     useEffect(() => {
         fetchMoviesByDirector();
-    }, [axiosInstance]);
+    }, []); // Removed dependency on axiosInstance since we're now using apiService
     
     const handleEditClick = (pelicula) => {
         setMovieDetails(pelicula);
@@ -47,7 +48,7 @@ const Director = () => {
     };
     
     const handleSaveChanges = () => {
-        axiosInstance.put(`http://localhost:5000/movies/${movieDetails._id}`, movieDetails, {
+        apiService.put(`/movies/${movieDetails._id}`, movieDetails, {
             headers: {
                 'Authorization': 'Bearer ' + authToken
             }
@@ -55,15 +56,16 @@ const Director = () => {
         .then(response => {
             console.log("Movie updated successfully:", response.data);
             setShowModal(false);
-            fetchMoviesByDirector();
+            fetchMoviesByDirector();  // Re-fetch data after update
         })
         .catch(error => {
-            console.error("Error updating movie:", error);
+            const errorMessage = error.response && error.response.data ? error.response.data.message : error.message;
+            console.error("Error updating movie:", errorMessage);
         });
     };
     
     const handleDelete = () => {
-        axiosInstance.delete(`http://localhost:5000/movies/${movieDetails._id}`, {
+        apiService.delete(`/movies/${movieDetails._id}`, {
             headers: {
                 'Authorization': 'Bearer ' + authToken
             }
@@ -71,12 +73,14 @@ const Director = () => {
         .then(response => {
             console.log("Movie deleted successfully:", response.data);
             setShowModal(false);
-            fetchMoviesByDirector();
+            fetchMoviesByDirector();  // Re-fetch data after deletion
         })
         .catch(error => {
-            console.error("Error deleting movie:", error);
+            const errorMessage = error.response && error.response.data ? error.response.data.message : error.message;
+            console.error("Error deleting movie:", errorMessage);
         });
     };
+    
     
 
     return (
