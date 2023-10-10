@@ -31,6 +31,12 @@ Este es un proyecto simple que combina un servidor backend con Node.js y Express
 
 El servidor debería estar corriendo en `http://localhost:5000`.
 
+No olvidar poner las variables de entorno, puede ser en un archivo .env dentro del directorio server.
+
+JWT_SECRET=Un secreto para generar JWT
+DB_USERNAME=User de Mongo
+DB_PASSWORD=Password de Mongo
+
 ### Configuración del Cliente
 
 1. Navega a la carpeta `client/`:
