@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { AxiosContext } from '../index';
+import React, { useState, useEffect } from 'react';
 import BaseLayout from './BaseLayout';
 import ModalComponent from './Modal';
 import { useAuth } from '../AuthContext'; // Make sure to provide the correct path to AuthContext.js
