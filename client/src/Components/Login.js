@@ -1,7 +1,9 @@
 import React, { useState, useContext } from 'react'; // Import useContext here
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';  // Import the AuthContext (not AuthContextProvider)
+
+import { apiService } from '../Helpers/apiService'; 
+
 
 const Login = () => {
     const [name, setName] = useState('');
@@ -14,7 +16,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/authenticate/login', {
+            const response = await apiService.post('/authenticate/login', {
                 name,
                 password
             });
@@ -23,7 +25,8 @@ const Login = () => {
             navigate('/');  // Redirect to the home page
         } catch (err) {
             console.error(err);
-            setError('Invalid name or password');
+            const errorMessage = err.response && err.response.data ? err.response.data.message : err.message;
+            setError('Invalid name or password: ' + errorMessage);
         }
     };
 

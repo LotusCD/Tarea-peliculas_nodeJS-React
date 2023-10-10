@@ -15,10 +15,10 @@ import { App } from './App';
 
 
 // Axios instance
-const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5000',
-  // ... any other axios configurations you might have ...
-});
+// const axiosInstance = axios.create({
+//   baseURL: 'http://localhost:5000',
+//   // ... any other axios configurations you might have ...
+// });
 
 export const AxiosContext = React.createContext(axiosInstance);
 
